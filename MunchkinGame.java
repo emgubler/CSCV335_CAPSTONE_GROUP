@@ -54,7 +54,7 @@ public class MunchkinGame extends Application {
 				//creates a character
 				Character character = initializeCharacter();
 
-				//creates a boolean representing if the game is over or not
+				//creates a boolean representing if the game is over or not				
 				boolean isGameOver = true; //set this to true to play. freezes if loop is vacant
 				//loop continues until player wins or loses
 				while(isGameOver == false) {
@@ -172,17 +172,30 @@ public class MunchkinGame extends Application {
 		
 		//creates the menu control holder and aligns
 		HBox menuOptions = new HBox(50);
-		menuOptions.setAlignment(Pos.BOTTOM_LEFT);
+		menuOptions.setAlignment(Pos.BOTTOM_CENTER);
 		menuOptions.setPrefWidth(SCENE_WIDTH);
 		menuOptions.setPrefHeight(200);
 		menuOptions.setStyle("-fx-background-color: Grey;");
+		
+		//creates the 'Draw Card' button and adds it to the controls
+		ImageView doorDeckImage = new ImageView(new Image(imagePath + "doorDeck.jpg", 150, 103, true, true));
+		Button drawCard = new Button("Draw Card", doorDeckImage);
+		drawCard.setContentDisplay(ContentDisplay.TOP);
+		drawCard.setFont(new Font(FONT_STYLE, FONT_SIZE));
+		drawCard.setWrapText(true);
+		drawCard.setTextAlignment(TextAlignment.CENTER);
+		HBox.setMargin(drawCard, new Insets(50, 0, 50, 10));
+		menuOptions.getChildren().add(drawCard);
+		menuOptions.setAlignment(Pos.BASELINE_LEFT);
+		
 		
 		//adds menu control to root
 		gameRoot.add(menuOptions, 0, 1);
 		
 		
 		
-		
+		//starts the design 2 turn walkthrough
+		 playGameTutorial(gameRoot, menuOptions, drawCard, cardDisplay);
 		
 		
 		//creates scene with root
@@ -245,6 +258,89 @@ public class MunchkinGame extends Application {
 		//TODO play a turn in the game
 		
 		return isGameOver;
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public void playGameTutorial(GridPane gameRoot, HBox menuOptions, Button drawCard, HBox cardDisplay) {
+		
+		Label tutorial = new Label("First, player will be prompted to draw a card. Click on the 'Draw Card' button now");
+		tutorial.setFont(new Font(FONT_STYLE, FONT_SIZE));
+		tutorial.setWrapText(true);
+		tutorial.setPrefWidth(500);
+		menuOptions.getChildren().add(tutorial);
+		
+		//exits the game when the "Exit" button is clicked
+		drawCard.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent me) {
+				tutorial.setText("If the card is a monster, it will appear up top, and the player must fight it."
+						+ " The player's cards will be shown in the grey area here, and fight options, such as run away will be offered.");
+				menuOptions.getChildren().remove(0);
+				
+				ImageView monsterCard = new ImageView(new Image(imagePath + "monsterExample.png", 253, 400, true, true));
+				cardDisplay.setAlignment(Pos.BASELINE_CENTER);
+				HBox.setMargin(monsterCard, new Insets(100, 0, 0, 0));
+				cardDisplay.getChildren().add(monsterCard);
+				
+				Button next1 = new Button("Next");
+				next1.setFont(new Font(FONT_STYLE, FONT_SIZE));
+				next1.setPrefWidth(100);
+				menuOptions.getChildren().add(next1);
+				
+				next1.setOnAction(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent ae) {
+						tutorial.setText("If the monster is defeated, treasure is collected and the player gains a level." +
+					" Unwanted cards can be used, sold, discarded, etc. as the rules dictate.");
+						cardDisplay.getChildren().remove(0);
+						ImageView treasureCard = new ImageView(new Image(imagePath + "treasureExample.png", 253, 400, true, true));
+						cardDisplay.setAlignment(Pos.BASELINE_CENTER);
+						HBox.setMargin(treasureCard, new Insets(100, 0, 0, 0));
+						cardDisplay.getChildren().add(treasureCard);
+						menuOptions.getChildren().remove(1);
+						
+						Button next2 = new Button("Next");
+						next2.setFont(new Font(FONT_STYLE, FONT_SIZE));
+						next2.setPrefWidth(100);
+						menuOptions.getChildren().add(next2);
+						
+						next2.setOnAction(new EventHandler<ActionEvent>() {
+							@Override
+							public void handle(ActionEvent ae) {
+								tutorial.setText("Gameplay loop continues until player reaches level 10 or dies. End of tutorial.");
+								cardDisplay.getChildren().remove(0);
+								HBox.setMargin(treasureCard, new Insets(100, 0, 0, 0));
+								menuOptions.getChildren().remove(1);
+									
+							}
+						});
+							
+					}
+				});
+				
+
+				
+
+
+				
+			}
+		});
+		
+		
+
+		
+		
+		
+		
 		
 	}
 	

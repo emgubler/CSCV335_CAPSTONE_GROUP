@@ -17,6 +17,8 @@ public class Character {
 		setPlayerRace(null);
 		 
 	}
+	
+	//getters and setters
 
 	public int getCharacterLevel() {
 		return characterLevel;

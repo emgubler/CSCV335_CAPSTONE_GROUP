@@ -10,6 +10,8 @@ public abstract class Card {
 		setDescription(newDescription);
 		
 	}
+	
+	//getters and setters
 
 	public String getName() {
 		return name;
