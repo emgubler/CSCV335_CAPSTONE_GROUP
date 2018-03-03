@@ -5,8 +5,8 @@ public class Character {
 	 private int characterLevel;
 	 private int goldAmount;
 	 private ArrayList<Card> hand;
-	 private Class playerClass;
-	 private Race playerRace;
+	 private String playerClass;
+	 private String playerRace;
 	
 	public Character(ArrayList<Card> startingHand) {
 		
@@ -44,19 +44,19 @@ public class Character {
 		this.hand = hand;
 	}
 
-	public Class getPlayerClass() {
+	public String getPlayerClass() {
 		return playerClass;
 	}
 
-	public void setPlayerClass(Class playerClass) {
+	public void setPlayerClass(String playerClass) {
 		this.playerClass = playerClass;
 	}
 
-	public Race getPlayerRace() {
+	public String getPlayerRace() {
 		return playerRace;
 	}
 
-	public void setPlayerRace(Race playerRace) {
+	public void setPlayerRace(String playerRace) {
 		this.playerRace = playerRace;
 	}
 

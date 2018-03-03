@@ -15,17 +15,37 @@ import java.util.*;
 
 public class MunchkinGame extends Application {
 	
-	final int SCENE_WIDTH = 800;
-	final int SCENE_HEIGHT = 800;
+	final int SCENE_WIDTH = 1400;
+	final int SCENE_HEIGHT = 900;
 	final int FONT_SIZE = 20;
-	final int BUTTON_WIDTH = 200;
+	final int INTRO_BUTTON_WIDTH = 200;
+	final int GAME_BUTTON_WIDTH = 150;
+	final int GAME_BUTTON_HEIGHT = 180;
 	final String FONT_STYLE = "Arial";
 	final String imagePath = "./";
-
+	
+	Label dialogueBox;
+	ToggleButton cardSlot1;
+	ToggleButton cardSlot2;
+	ToggleButton cardSlot3;
+	ToggleButton cardSlot4;
+	ToggleButton cardSlot5;
+	ToggleButton cardSlot6;
+	Button actionButton1;
+	Button actionButton2;
+	Button actionButton3;
+	Button actionButton4;
+	Button actionButton5;
+	Label playerLevelField;
+	Label playerGoldField;
+	Label playerStrengthField;
+	Label playerClassField;
+	Label playerRaceField;
 	
 	public static void main(String[] args) {
 		launch(args);
 	}
+	
 	
 	
 	@Override
@@ -53,15 +73,11 @@ public class MunchkinGame extends Application {
 				ArrayList<Card> treasureDeck = initializeTreasureDeck();
 				//creates a character
 				Character character = initializeCharacter();
+				
+				//begins gameplay
+				gameMain(doorDeck, treasureDeck, character);
 
-				//creates a boolean representing if the game is over or not				
-				boolean isGameOver = true; //set this to true to play. freezes if loop is vacant
-				//loop continues until player wins or loses
-				while(isGameOver == false) {
-					
-					isGameOver = playGame(doorDeck, treasureDeck, character);
-					
-				}
+
 			}
 		});
 		
@@ -106,18 +122,18 @@ public class MunchkinGame extends Application {
 		//creates and modifies the 'Start Game' button
 		Button startGame = new Button("Start Game");
 		startGame.setFont(new Font(FONT_STYLE, FONT_SIZE));
-		startGame.setPrefWidth(BUTTON_WIDTH);
+		startGame.setPrefWidth(INTRO_BUTTON_WIDTH);
 		
 
 		//creates and modifies the 'Exit' button
 		Button exitGame = new Button("Exit");
 		exitGame.setFont(new Font(FONT_STYLE, FONT_SIZE));
-		exitGame.setPrefWidth(BUTTON_WIDTH);
+		exitGame.setPrefWidth(INTRO_BUTTON_WIDTH);
 		
 		//lists the participating programmers and modifies label
 		Label credits = new Label("Adapted by:\nAshley Roman\nBrendaTorres\nCarlos Portillo\nEvan Gubler\nand Jeremy Roberts");
 		credits.setFont(new Font(FONT_STYLE, FONT_SIZE));
-		credits.setPrefWidth(BUTTON_WIDTH);
+		credits.setPrefWidth(INTRO_BUTTON_WIDTH);
 		credits.setWrapText(true);
 		credits.setAlignment(Pos.CENTER);
 		credits.setTextAlignment(TextAlignment.CENTER);
@@ -162,42 +178,167 @@ public class MunchkinGame extends Application {
 		HBox cardDisplay = new HBox(50);
 		cardDisplay.setAlignment(Pos.TOP_LEFT);
 		cardDisplay.setPrefWidth(SCENE_WIDTH);
-		cardDisplay.setPrefHeight(SCENE_HEIGHT - 200);
+		cardDisplay.setPrefHeight(SCENE_HEIGHT - 280);
 		
-		//TODO create a bunch of various cards to interact with (Card class)
+		//creates a dialogue box to guide gameplay
+		dialogueBox = new Label("This is the dialogue box. Instructions for the player and details of gameplay should go here. Was a monster drawn? do I need to fight? Can I run away?");
+		dialogueBox.setFont(new Font(FONT_STYLE, FONT_SIZE));
+		dialogueBox.setWrapText(true);
+		dialogueBox.setTextAlignment(TextAlignment.CENTER);
+		dialogueBox.setPrefHeight(400);
+		dialogueBox.setPrefWidth(800);
+		dialogueBox.setBorder(new Border(new BorderStroke(Color.GOLD,
+				BorderStrokeStyle.SOLID, new CornerRadii(3.0), BorderStroke.MEDIUM)));
+		dialogueBox.setAlignment(Pos.CENTER);
+		dialogueBox.setStyle("-fx-background-color: Grey;");
+		cardDisplay.getChildren().add(dialogueBox);
+		cardDisplay.setAlignment(Pos.CENTER);
+		
 		
 		//adds card display to root
 		gameRoot.add(cardDisplay, 0, 0);
+		
+		
+		//creates a container for action buttons and adds it to the scene
+		HBox actionContainer = new HBox(30);
+		
+		gameRoot.add(actionContainer, 0, 1);
+		actionContainer.setAlignment(Pos.CENTER_LEFT);
+		actionContainer.setPrefWidth(SCENE_WIDTH);
+		actionContainer.setPrefHeight(80);
+		actionContainer.setStyle("-fx-background-color: Gold;");
+		actionContainer.setAlignment(Pos.CENTER);
+		
+		//creates action buttons and adds them to actionContainer
+		actionButton1 = new Button("Fight");
+		actionButton1.setFont(new Font(FONT_STYLE, FONT_SIZE));
+		actionContainer.getChildren().add(actionButton1);
+		
+		actionButton2 = new Button("Run Away");
+		actionButton2.setFont(new Font(FONT_STYLE, FONT_SIZE));
+		actionContainer.getChildren().add(actionButton2);
+		
+		actionButton3 = new Button("Cast Spell (WIZARD only)");
+		actionButton3.setFont(new Font(FONT_STYLE, FONT_SIZE));
+		actionContainer.getChildren().add(actionButton3);
+		
+		actionButton4 = new Button("Sell Card");
+		actionButton4.setFont(new Font(FONT_STYLE, FONT_SIZE));
+		actionContainer.getChildren().add(actionButton4);
+		
+		actionButton5 = new Button("Buy Level");
+		actionButton5.setFont(new Font(FONT_STYLE, FONT_SIZE));
+		actionContainer.getChildren().add(actionButton5);
+		
+		//creates player data fields and adds them to the scene
+		playerLevelField = new Label("Level: 0");
+		playerLevelField.setFont(new Font(FONT_STYLE, FONT_SIZE));
+		actionContainer.getChildren().add(playerLevelField);
+
+		playerGoldField = new Label("Gold: 1000");
+		playerGoldField.setFont(new Font(FONT_STYLE, FONT_SIZE));
+		actionContainer.getChildren().add(playerGoldField);
+
+		playerStrengthField = new Label("Strength: 0");
+		playerGoldField.setFont(new Font(FONT_STYLE, FONT_SIZE));
+
+		playerClassField = new Label("Class: Unskilled");
+		playerClassField.setFont(new Font(FONT_STYLE, FONT_SIZE));
+		actionContainer.getChildren().add(playerClassField);
+
+		playerRaceField = new Label("Race: Human");
+		playerRaceField.setFont(new Font(FONT_STYLE, FONT_SIZE));
+		actionContainer.getChildren().add(playerRaceField);
 
 		
+		
+		
+		
+		
 		//creates the menu control holder and aligns
-		HBox menuOptions = new HBox(50);
-		menuOptions.setAlignment(Pos.BOTTOM_CENTER);
+		HBox menuOptions = new HBox(30);
+		menuOptions.setAlignment(Pos.CENTER);
 		menuOptions.setPrefWidth(SCENE_WIDTH);
-		menuOptions.setPrefHeight(200);
+		menuOptions.setPrefHeight(250);
 		menuOptions.setStyle("-fx-background-color: Grey;");
 		
 		//creates the 'Draw Card' button and adds it to the controls
-		ImageView doorDeckImage = new ImageView(new Image(imagePath + "doorDeck.jpg", 150, 103, true, true));
+		ImageView doorDeckImage = new ImageView(new Image(imagePath + "doorDeck.jpg", 125, 75, true, true));
 		Button drawCard = new Button("Draw Card", doorDeckImage);
-		drawCard.setContentDisplay(ContentDisplay.TOP);
+		drawCard.setContentDisplay(ContentDisplay.BOTTOM);
 		drawCard.setFont(new Font(FONT_STYLE, FONT_SIZE));
 		drawCard.setWrapText(true);
 		drawCard.setTextAlignment(TextAlignment.CENTER);
-		HBox.setMargin(drawCard, new Insets(50, 0, 50, 10));
+		HBox.setMargin(drawCard, new Insets(0, 0, 0, 20));
 		menuOptions.getChildren().add(drawCard);
+		
+		//creates the card buttons
+		cardSlot1 = new ToggleButton("Card details listed here when they are drawn");
+		cardSlot1.setFont(new Font(FONT_STYLE, FONT_SIZE));
+		cardSlot1.setWrapText(true);
+		cardSlot1.setPrefWidth(GAME_BUTTON_WIDTH);
+		cardSlot1.setPrefHeight(GAME_BUTTON_HEIGHT);
+		cardSlot1.setTextAlignment(TextAlignment.CENTER);
+		menuOptions.getChildren().add(cardSlot1);
+		
+		cardSlot2 = new ToggleButton("Cards can be used by clicking on these, perhaps");
+		cardSlot2.setFont(new Font(FONT_STYLE, FONT_SIZE));
+		cardSlot2.setWrapText(true);
+		cardSlot2.setPrefWidth(GAME_BUTTON_WIDTH);
+		cardSlot2.setPrefHeight(GAME_BUTTON_HEIGHT);
+		cardSlot2.setTextAlignment(TextAlignment.CENTER);
+		menuOptions.getChildren().add(cardSlot2);
+		
+		cardSlot3 = new ToggleButton("Card Slot 3");
+		cardSlot3.setFont(new Font(FONT_STYLE, FONT_SIZE));
+		cardSlot3.setWrapText(true);
+		cardSlot3.setPrefWidth(GAME_BUTTON_WIDTH);
+		cardSlot3.setPrefHeight(GAME_BUTTON_HEIGHT);
+		cardSlot3.setTextAlignment(TextAlignment.CENTER);
+		menuOptions.getChildren().add(cardSlot3);
+		
+		cardSlot4 = new ToggleButton("Card Slot 4");
+		cardSlot4.setFont(new Font(FONT_STYLE, FONT_SIZE));
+		cardSlot4.setWrapText(true);
+		cardSlot4.setPrefWidth(GAME_BUTTON_WIDTH);
+		cardSlot4.setPrefHeight(GAME_BUTTON_HEIGHT);
+		cardSlot4.setTextAlignment(TextAlignment.CENTER);
+		menuOptions.getChildren().add(cardSlot4);
+		
+		cardSlot5 = new ToggleButton("Card Slot 5");
+		cardSlot5.setFont(new Font(FONT_STYLE, FONT_SIZE));
+		cardSlot5.setWrapText(true);
+		cardSlot5.setPrefWidth(GAME_BUTTON_WIDTH);
+		cardSlot5.setPrefHeight(GAME_BUTTON_HEIGHT);
+		cardSlot5.setTextAlignment(TextAlignment.CENTER);
+		menuOptions.getChildren().add(cardSlot5);
+		
+		cardSlot6 = new ToggleButton("Card Slot 6 (DWARF only)");
+		cardSlot6.setFont(new Font(FONT_STYLE, FONT_SIZE));
+		cardSlot6.setWrapText(true);
+		cardSlot6.setPrefWidth(GAME_BUTTON_WIDTH);
+		cardSlot6.setPrefHeight(GAME_BUTTON_HEIGHT);
+		cardSlot6.setTextAlignment(TextAlignment.CENTER);
+		menuOptions.getChildren().add(cardSlot6);
+		
+		//aligns the menu options
 		menuOptions.setAlignment(Pos.BASELINE_LEFT);
+
+		
+		//creates the 'End Turn' button and adds it to the controls
+		Button endTurn = new Button("End Turn");
+		endTurn.setContentDisplay(ContentDisplay.TOP);
+		endTurn.setFont(new Font(FONT_STYLE, FONT_SIZE));
+		endTurn.setWrapText(true);
+		endTurn.setTextAlignment(TextAlignment.CENTER);
+		endTurn.setPrefHeight(110);
+		HBox.setMargin(endTurn, new Insets(25, 5, 25, 0));
+		menuOptions.getChildren().add(endTurn);
 		
 		
 		//adds menu control to root
-		gameRoot.add(menuOptions, 0, 1);
-		
-		
-		
-		//starts the design 2 turn walkthrough
-		 playGameTutorial(gameRoot, menuOptions, drawCard, cardDisplay);
-		
-		
+		gameRoot.add(menuOptions, 0, 2);
+	
 		//creates scene with root
 		Scene gameScene = new Scene(gameRoot, SCENE_WIDTH, SCENE_HEIGHT);
 		
@@ -206,8 +347,13 @@ public class MunchkinGame extends Application {
 		
 	}
 	
+	
+	
+	
+	
 	/*
 	 * This method will generate the door deck.
+	 * Carlos should handle this portion since he knows the cards.
 	 */
 	public ArrayList<Card> initializeDoorDeck() {
 		
@@ -247,100 +393,32 @@ public class MunchkinGame extends Application {
 		
 	}
 	
+	
+	
 	/*
-	 * This method will handle playing a single turn of the game. It will
-	 * ensure that a player start a turn by drawing a card.
+	 * This method is the main loop for gameplay. It loops turns
+	 * until the player has won or lost. A turn consists of a draw
+	 * phase, a combat phase (if a monster was drawn), a post-combat
+	 * phase, and an end turn phase.
 	 */
-	public boolean playGame(ArrayList<Card> doorDeck, ArrayList<Card> treasureDeck, Character character) {
-		
-		boolean isGameOver = false;
-		
-		//TODO play a turn in the game
-		
-		return isGameOver;
-		
-	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	public void playGameTutorial(GridPane gameRoot, HBox menuOptions, Button drawCard, HBox cardDisplay) {
+	public void gameMain(ArrayList<Card> doorDeck, ArrayList<Card> treasureDeck, Character character) {
 		
-		Label tutorial = new Label("First, player will be prompted to draw a card. Click on the 'Draw Card' button now");
-		tutorial.setFont(new Font(FONT_STYLE, FONT_SIZE));
-		tutorial.setWrapText(true);
-		tutorial.setPrefWidth(500);
-		menuOptions.getChildren().add(tutorial);
+		System.out.println("initiating gameplay");
+		//creates a boolean representing if the game is over or not				
 		
-		//exits the game when the "Exit" button is clicked
-		drawCard.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent me) {
-				tutorial.setText("If the card is a monster, it will appear up top, and the player must fight it."
-						+ " The player's cards will be shown in the grey area here, and fight options, such as run away will be offered.");
-				menuOptions.getChildren().remove(0);
-				
-				ImageView monsterCard = new ImageView(new Image(imagePath + "monsterExample.png", 253, 400, true, true));
-				cardDisplay.setAlignment(Pos.BASELINE_CENTER);
-				HBox.setMargin(monsterCard, new Insets(100, 0, 0, 0));
-				cardDisplay.getChildren().add(monsterCard);
-				
-				Button next1 = new Button("Next");
-				next1.setFont(new Font(FONT_STYLE, FONT_SIZE));
-				next1.setPrefWidth(100);
-				menuOptions.getChildren().add(next1);
-				
-				next1.setOnAction(new EventHandler<ActionEvent>() {
-					@Override
-					public void handle(ActionEvent ae) {
-						tutorial.setText("If the monster is defeated, treasure is collected and the player gains a level." +
-					" Unwanted cards can be used, sold, discarded, etc. as the rules dictate.");
-						cardDisplay.getChildren().remove(0);
-						ImageView treasureCard = new ImageView(new Image(imagePath + "treasureExample.png", 253, 400, true, true));
-						cardDisplay.setAlignment(Pos.BASELINE_CENTER);
-						HBox.setMargin(treasureCard, new Insets(100, 0, 0, 0));
-						cardDisplay.getChildren().add(treasureCard);
-						menuOptions.getChildren().remove(1);
-						
-						Button next2 = new Button("Next");
-						next2.setFont(new Font(FONT_STYLE, FONT_SIZE));
-						next2.setPrefWidth(100);
-						menuOptions.getChildren().add(next2);
-						
-						next2.setOnAction(new EventHandler<ActionEvent>() {
-							@Override
-							public void handle(ActionEvent ae) {
-								tutorial.setText("Gameplay loop continues until player reaches level 10 or dies. End of tutorial.");
-								cardDisplay.getChildren().remove(0);
-								HBox.setMargin(treasureCard, new Insets(100, 0, 0, 0));
-								menuOptions.getChildren().remove(1);
-									
-							}
-						});
-							
-					}
-				});
-				
-
-				
-
-
-				
-			}
-		});
-		
-		
-
-		
-		
-		
-		
+		//loop continues until player wins or loses
+		//while(!isGameOver) {
+			
+			//TODO write drawCard() method
+			
+			//TODO write combat() method
+			
+			//TODO write postCombat() method
+			
+			//TODO write endTurn() method
+			
+		//}
 		
 	}
 	
