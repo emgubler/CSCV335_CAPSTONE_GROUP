@@ -1,32 +1,19 @@
+//Program: Card.java
+//Purpose: Base class for all cards in the game
+//Developer: Carlos Portillo
 
-public abstract class Card {
+public class Card {
+	//this variable lets the game know which type of card you drew 
+	private String type;
 	
-	private String name;
-	private String description;
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	
-	public Card(String newName, String newDescription) {
-		
-		setName(newName);
-		setDescription(newDescription);
-		
-	}
-	
-	//getters and setters
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 }
