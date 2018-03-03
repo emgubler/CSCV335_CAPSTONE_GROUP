@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Stack;
 
 import javafx.application.Application;
@@ -40,6 +41,7 @@ public class MunchkinGame extends Application {
 	final int GAME_BUTTON_HEIGHT = 180;
 	final String FONT_STYLE = "Arial";
 	final String imagePath = "./";
+	boolean isGameOver = false;
 
 	Label dialogueBox;
 	ToggleButton cardSlot1;
@@ -400,7 +402,6 @@ public class MunchkinGame extends Application {
 	public void gameMain(Stack<Card> doorDeck, Stack<Card> treasureDeck, Character character) {
 
 		System.out.println("initiating gameplay");
-		boolean isGameOver = true;
 		// creates a boolean representing if the game is over or not
 
 		// loop continues until player wins or loses
@@ -419,6 +420,9 @@ public class MunchkinGame extends Application {
 
 	public Card drawCard(Stack<Card> doorDeck, Character character) {
 		Card drawnCard = doorDeck.pop();
+		if (drawnCard.getType().equals("Curse")) {
+			applyCurse((Curse) drawnCard, character);
+		}
 		if (!drawnCard.getType().equals("Monster")) {
 			character.getHand().add(drawnCard);
 			return null;
@@ -426,33 +430,145 @@ public class MunchkinGame extends Application {
 		return drawnCard;
 	}
 
-	// public byte combat(Monster mob, Character character, int bonus) {
-	// if (character.getCombatValue()+bonus > mob.getStrength()) {
-	// return mob.getTreasureValue();
-	// }
-	// if (character.getCombatValue()+bonus == mob.getStrength() &&
-	// character.getPlayerClass().equals("Warrior")) {
-	// return mob.getTreasureValue();
-	// }
-	// else {
-	// int diceRoll = new Random().nextInt(6)+1;
-	// if(diceRoll >=5)
-	// {
-	// return 0;
-	// }
-	// if(diceRoll>=4 && character.getPlayerRace().equals("Elf"))
-	// {
-	// return 0;
-	// }
-	// else
-	// {
-	// applyCurse(character, mob.getVulnerability());
-	// }
-	// }
-	// }
-	// public void applyCurse(Character character, Curse curse)
-	// {
-	// if(curse.getCurseEffect().equals("Loose" + curse.curseValue + " items"))
-	// }
+	public byte combat(Monster mob, Character character) {
+		if (character.getCombatValue() > mob.getStrength()) {
+			character.setCharacterLevel(character.getCharacterLevel() + 1);
+			return mob.getTreasureValue();
+		}
+		else if (character.getCombatValue() == mob.getStrength() && character.getPlayerClass().equals("Warrior")) {
+			character.setCharacterLevel(character.getCharacterLevel() + 1);
+			return mob.getTreasureValue();
 
+		}
+		else {
+			int diceRoll = new Random().nextInt(6) + 1;
+			if (diceRoll >= 5) { // You ran away successfully
+				return 0;
+			}
+			if (diceRoll >= 4 && character.getPlayerRace().equals("Elf")) { // You ran away successfully
+				return 0;
+			}
+			else { // You didn't run away successfully
+				if (mob.getVulnerability() == 1 && character.getPlayerRace().equals("Elf")) {
+					applyBadStuff(mob, character);
+					return 0;
+				}
+				else if (mob.getVulnerability() == 2 && character.getPlayerRace().equals("Halfling")) {
+					applyBadStuff(mob, character);
+					return 0;
+				}
+				else if (mob.getVulnerability() == 3 && character.getPlayerRace().equals("Dwarf")) {
+					applyBadStuff(mob, character);
+					return 0;
+				}
+				else if (mob.getVulnerability() >= 4) {
+					applyBadStuff(mob, character);
+					return 0;
+				}
+				else {
+					return 0;
+				}
+			}
+		}
+	}
+
+	public void applyCurse(Curse curse, Character character) {
+		byte curseVal = curse.getCurseValue();
+		if (curseVal == 1 || curseVal == 2) {
+			for (int i = 0; i < curseVal; i++) {
+				character.getHand().remove(
+						character.getItemsInHand().remove(new Random().nextInt(character.getItemsInHand().size())));
+			}
+			return;
+		}
+		if (curseVal == 3) {
+			character.setPlayerRace("Human");
+			return;
+		}
+		if (curseVal == 4 || curseVal == 5) {
+			if (new Random().nextInt(3) == 0) {
+				character.setPlayerRace("Elf");
+				return;
+			}
+			if (new Random().nextInt(3) == 1) {
+				character.setPlayerRace("Halfling");
+				return;
+			}
+			if (new Random().nextInt(3) == 2) {
+				character.setPlayerRace("Dwarf");
+				return;
+			}
+			return;
+		}
+		if (curseVal == 6 || curseVal == 7) {
+			character.setPlayerClass("Unskilled");
+			return;
+		}
+		if (curseVal >= 8) {
+			if (character.getCharacterLevel() > 1) {
+				character.setCharacterLevel(character.getCharacterLevel() - 1);
+				return;
+			}
+			else {
+				return;
+			}
+		}
+		return;
+	}
+
+	public void loot(int lootAttained, Character character, TreasureDeck treasure) {
+		for (int i = 0; i < lootAttained; i++) {
+			if (treasure.getTreasureDeck().isEmpty()) {
+				isGameOver = true;
+				return;
+			}
+			character.getHand().add(treasure.getTreasureDeck().pop());
+		}
+	}
+
+	public void applyBadStuff(Monster mob, Character character) {
+		if (mob.getBadStuff() == 1 || mob.getBadStuff() == 2) {
+			character.setCharacterLevel(character.getCharacterLevel() - mob.getBadStuff());
+			return;
+		}
+		if (mob.getBadStuff() == 3) {
+			character.getHand().remove(character.getHighestValueItemInHand());
+		}
+		if (mob.getBadStuff() == 4) {
+			if (character.getItemsInHand().size() == 0) {
+				return;
+			}
+			if (character.getItemsInHand().size() == 1) {
+				character.getHand().remove(character.getItemsInHand().remove(0));
+				return;
+			}
+			if (character.getItemsInHand().size() == 2) {
+				character.getHand().remove(character.getItemsInHand().remove(0));
+				character.getHand().remove(character.getItemsInHand().remove(0));
+				return;
+			}
+			int item1 = new Random().nextInt(character.getItemsInHand().size());
+			character.getHand().remove(character.getItemsInHand().get(item1));
+			item1 = new Random().nextInt(character.getItemsInHand().size());
+			character.getHand().remove(character.getItemsInHand().get(item1));
+			return;
+		}
+		else // You died
+		{
+			isGameOver = true;
+			return;
+		}
+
+	}
+
+	public void endTurn(Character character) {
+		while (character.getPlayerRace().equals("Dwarf") && character.getHand().size() > 6) {
+			// Write code to prompt player to discard cards
+			return;
+		}
+		while (character.getHand().size() > 5) {
+			// Write code to prompt player to discard cards
+			return;
+		}
+	}
 }
