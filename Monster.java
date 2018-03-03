@@ -7,6 +7,7 @@ public class Monster extends Card {
 	private byte vulnerability;
 	//determines how much treasure cards you get if you beat this monster
 	private byte treasureValue;
+	private byte badStuff;
 	
 	public Monster() {
 		setType("Monster");
@@ -14,6 +15,7 @@ public class Monster extends Card {
 		strength = (byte)(1+monsterRNG.nextInt(20));
 		vulnerability = (byte)(1+ monsterRNG.nextInt(10));
 		treasureValue = (byte)(1+ monsterRNG.nextInt(5));
+		badStuff = (byte)(1 + monsterRNG.nextInt(5));
 		
 	}
 	
@@ -34,6 +36,14 @@ public class Monster extends Card {
 	}
 	public void setTreasureValue(byte treasureValue) {
 		this.treasureValue = treasureValue;
+	}
+
+	public byte getBadStuff() {
+		return badStuff;
+	}
+
+	public void setBadStuff(byte badStuff) {
+		this.badStuff = badStuff;
 	}
 	
 	
