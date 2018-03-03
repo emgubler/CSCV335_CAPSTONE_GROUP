@@ -571,11 +571,5 @@ public class MunchkinGame extends Application {
 			return;
 		}
 	}
-	//Method created by Carlos Portillo
-	//This method pops a card from the deck and adds it to chracter's hand
-	public void drawCard(DoorDeck doorDeck, Character character) {
-		Card cardDrawn = doorDeck.getDoorDeck().pop();
-		character.getHand().add(cardDrawn);
-	}
 
 }
