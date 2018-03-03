@@ -12,4 +12,7 @@ public class TreasureDeck {
 				treasureDeck.push(newCard);
 			}
 		}
+		public Stack<Card> getDoorDeck(){
+			return this.treasureDeck;
+		}
 }

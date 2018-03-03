@@ -80,5 +80,8 @@ public class DoorDeck {
 		    i++;
 		} //end while
 	} //end createDeck method
+	public Stack<Card> getDoorDeck(){
+		return this.doorDeck;
+	}
 }
 
