@@ -91,7 +91,7 @@ public class Character {
 		Item max = null;
 		for (int i = 0; i < hand.size(); i++) {
 			if (hand.get(i).getType().equals("Item")) {
-				if (max.getCombatValue() < ((Item) hand.get(i)).getCombatValue()) {
+				if (max.getMonetaryValue() < ((Item) hand.get(i)).getMonetaryValue()) {
 					max = ((Item) hand.get(i));
 				}
 			}
