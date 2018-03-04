@@ -6,6 +6,10 @@
 package drawcard;
 
 import java.util.ArrayList;
+import javafx.application.Application;
+import javax.smartcardio.Card;
+import javafx.event.ActionEvent;
+import javafx.scene.control.Button;
 
 /**
  *
@@ -13,127 +17,73 @@ import java.util.ArrayList;
  */
 public final class DrawCard extends Application { 
 
-    
-    
 	 private int DrawCardLevel;
+	 private int getDoorDeck;
 
-	 private int getType;
-
-	 private ArrayList<Card> hand;
+	 private ArrayList<DrawCard> Characterhand;
 
 	 private String DrawCards;
+	 private String PlayCardsMunchkinGame;
+         private int GetDoorDeck;
+         private String PopCard;
+         private String playCards;
+         private String playcards;
+         private ArrayList<DrawCard> CharacterHand;
+         private String PopCards;
 
-	 private String PlayCards;
-    private int GetType;
-    private String playcards;
-    private String playCards;
-
-	
-
-	public DrawCard(ArrayList<DrawCard> startingHand) {
-
-		
+	public DrawCard(ArrayList<MunchkinGame> CharacterHand) {
 
 		setDrawCardLevel(1);
-
-		setGetType(0);
-
-		setHand(startingHand);
-
-		setDrawCards(null);
-
+                setActionMethod(1);
+		setGetDoorDeck(1);
+		setCharacterHand(startingCharacterHand);
+		setPopCards(null);
 		setPlayCards(null);
 
-		 
-
 	}
-
-	
 
 	//getters and setters
 
-
-
-	public int getDrawCardLevel() {
-
+	public int getDoorDeck() {
 		return DrawCardLevel;
-
 	}
-
-
 
 	public void setDrawCardLevel(int DrawCardLevel) {
-
 		this.drawcardLevel = drawcardLevel;
-
 	}
 
-
-
-	public int getType() {
-
-		return getType;
-
+	public int getDoorDeck() {
+		return getDoorDeck;
 	}
 
-
-
-	public void setGetType(int GetType ) {
-
-		this.GetType = GetType;
-
+	public void drawCard(DoorDeck doorDeck, Character character) {
+            Card cardDrawn = doorDeck.getDoorDeck().pop();
+            character.getHand().add(cardDrawn);
 	}
 
-
-
-	public ArrayList<DrawCard> getHand() {
-
-		return hand;
-
+	public ArrayList<DrawCard> CharacterHand() {
+		return CharacterHand;
+	}
+        
+        public void setDoorDeck(int GetDoorDeck ) {
+		this.GetDoorDeck = GetDoorDeck;
 	}
 
-
-
-	public void setHand(ArrayList<DrawCard> hand) {
-
-		this.hand = hand;
-
+	public String getPopCards() {
+		return PopCards;
 	}
 
-
-
-	public String getDrawCards() {
-
-		return DrawCards;
-
+	public void setPopCards(String PopCards) {
+		this.PopCards = PopCards;
 	}
-
-
-
-	public void setDrawCards(String DrawCards) {
-
-		this.drawcards = drawcards;
-
-	}
-
-
 
 	public String getPlayCards() {
-
-		return playcards;
-
+             String PlayCards = null;
+		return PlayCards;
 	}
-
-
-
+        
 	public void setPlayCards(String playCards) {
-
 		this.playCards = playCards;
-
 	}
-
-
-
 }
-
 
